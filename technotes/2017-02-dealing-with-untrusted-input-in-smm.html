@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Dealing with Untrusted Input in SMM &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="../index.html"/>
+        <link rel="next" title="ABI data consumption" href="../abi-data-consumption.html"/>
+        <link rel="prev" title="Timestamps" href="../timestamp.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../timestamp.html">Timestamps</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Dealing with Untrusted Input in SMM</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#objective">Objective</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#background">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#detailed-design">Detailed Design</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fully-insured-aka-paranoid-mode">Fully insured (aka “paranoid”) mode</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#caveats">Caveats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#security-considerations">Security Considerations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#testing-plan">Testing Plan</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Intel/NativeRaminit/Sandybridge.html">Sandy Bridge Raminit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Dealing with Untrusted Input in SMM</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/technotes/2017-02-dealing-with-untrusted-input-in-smm.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="dealing-with-untrusted-input-in-smm">
+<span id="dealing-with-untrusted-input-in-smm"></span><h1>Dealing with Untrusted Input in SMM<a class="headerlink" href="#dealing-with-untrusted-input-in-smm" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="objective">
+<span id="objective"></span><h2>Objective<a class="headerlink" href="#objective" title="Permalink to this headline">¶</a></h2>
+<p>Intel Security recently held a talk and published
+<a class="reference external" href="http://www.intelsecurity.com/advanced-threat-research/content/data/REConBrussels2017_BARing_the_system.pdf">slides</a>
+on a vulnerability in SMM handlers on x86 systems. They provide examples
+on how both UEFI and coreboot are affected.</p>
+</div>
+<div class="section" id="background">
+<span id="background"></span><h2>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>SMM, the System Management Mode, is a CPU mode that is configured by
+firmware and survives the system’s initialization phase. On certain
+events that mode can be triggered and executes code, suspending the
+current processing that is going on the CPU, no matter whether it’s
+in kernel or user space.</p>
+<p>In SMM, the CPU has access to memory dedicated to that mode (SMRAM) that
+is normally inaccessible, and typically some restrictions are lifted as
+well (eg. in some configurations, certain flash write protection registers
+are writable in SMM only).  This makes SMM a target for attacks which
+seek to elevate a ring0 (kernel) exploit to something permanent.</p>
+</div>
+<div class="section" id="overview">
+<span id="overview"></span><h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<p>Intel Security showed several places in coreboot’s SMM handler (Slides
+32+) that could be manipulated into writing data at user-chosen addresses
+(SMRAM or otherwise), by modifying the BAR (Base Address Register) on
+certain devices. By picking the right addresses and the right events
+(and with them, mutators on the data at these addresses), it might
+be possible to change the SMM handler itself to call into regular RAM
+(where other code resides that then can work with elevated privileges).</p>
+<p>Their proposed mitigations (Slide 37) revolve around making sure
+that the BAR entries are reasonable, and point to a device instead of
+regular memory or SMRAM. They’re not very detailed on how this could
+be implemented, which is what this document discusses.</p>
+</div>
+<div class="section" id="detailed-design">
+<span id="detailed-design"></span><h2>Detailed Design<a class="headerlink" href="#detailed-design" title="Permalink to this headline">¶</a></h2>
+<p>The attack works because the SMM handler trusts the results of the
+<code class="docutils literal"><span class="pre">pci_read_config32(dev,</span> <span class="pre">reg)</span></code> function, even though the value read by that
+function can be modified in kernel mode.</p>
+<p>In the general case it’s not possible to keep the cached value from
+system initialization because there are legitimate modifications the
+kernel can do to these values, so the only remedy is to make sure that
+the value isn’t totally off.</p>
+<p>For applications where hardware changes are limited by design (eg. no
+user-modifiable PCIe slots) and where the running kernel is known,
+such as Chromebooks, further efforts include caching the BAR settings
+at initialization time and comparing later accesses to that.</p>
+<p>What “totally off” means is chipset specific because it requires
+knowledge of the memory map as seen by the memory controller: which
+addresses are routed to devices, which are handled by the memory
+controller itself?
+The proposal is that in SMM, the <code class="docutils literal"><span class="pre">pci_read_config</span></code> functions (which
+aren’t timing critical) <em>always</em> validate the value read from a given
+set of registers (the BARs) and fail hard (ie. cold reset, potentially
+after logging the event) if they’re invalid (because that points to
+a severe kernel bug or an attack).
+The actual validation is done by a function implemented by the chipset code.</p>
+<p>Another validation that can be done is to make sure that the BAR has the
+appropriate bits set so it is enabled and points to memory (instead of
+IO space).</p>
+<p>In terms of implementation, this might look somewhat as follows. There
+are a bunch of blanks to fill in, in particular how to handle the actual
+config space access and there will be more registers that need to be
+checked for correctness, both official BARs (0-4) and per-chipset
+registers that need to be blacklisted in another chipset specific
+function:</p>
+<div class="highlight-c"><div class="highlight"><pre><span></span><span class="k">static</span> <span class="kr">inline</span> <span class="nf">__attribute__</span><span class="p">((</span><span class="n">always_inline</span><span class="p">))</span>
+<span class="kt">uint32_t</span> <span class="n">pci_read_config32</span><span class="p">[</span><span class="n">d</span><span class="p">](</span><span class="n">pci_devfn_t</span> <span class="n">dev</span><span class="p">,</span> <span class="kt">unsigned</span> <span class="kt">int</span> <span class="n">where</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">uint32_t</span> <span class="n">val</span> <span class="o">=</span> <span class="n">real_pci_read_config32</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">where</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">IS_ENABLED</span><span class="p">(</span><span class="n">__SMM__</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">where</span> <span class="o">==</span> <span class="n">PCI_BASE_ADDRESS_0</span><span class="p">)</span> <span class="o">&amp;&amp;</span>
+        <span class="n">is_mmio_ptr</span><span class="p">(</span><span class="n">dev</span><span class="p">,</span> <span class="n">where</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">is_address_in_mmio</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="p">{</span>
+            <span class="n">cold_reset</span><span class="p">();</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="n">val</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">is_address_in_mmio(addr)</span></code> would be a newly introduced function to be
+implemented by chipset drivers that returns true if the passed address
+points into whatever is considered valid MMIO space.
+<code class="docutils literal"><span class="pre">is_mmio_ptr(dev,</span> <span class="pre">where)</span></code> returns true for PCI config space registers that
+point to BARs (allowing custom overrides because sometimes additional
+registers are used to point to addresses).</p>
+<p>For this function what is considered a legal address needs to be
+documented, in accordance with the chipset design. (For example: AMD
+K8 has a bunch of registers that define strictly which addresses are
+“MMIO”)</p>
+<div class="section" id="fully-insured-aka-paranoid-mode">
+<span id="fully-insured-aka-paranoid-mode"></span><h3>Fully insured (aka “paranoid”) mode<a class="headerlink" href="#fully-insured-aka-paranoid-mode" title="Permalink to this headline">¶</a></h3>
+<p>For systems with more control over the hardware and kernel (such as
+Chromebooks), it may be possible to set up the BARs in a way that the
+kernel isn’t compelled to rewrite them, and store these values for
+later comparison.</p>
+<p>This avoids attacks such as setting the BAR to point to another device’s
+MMIO region which the above method can’t catch. Such a configuration
+would be “illegal”, but depending on the evaluation order of BARs
+in the chipset, this might effectively only disable the device used for
+the attack, while still fooling the SMM handler.</p>
+<p>Since this method isn’t generalizable, it has to be an optional
+compile-time feature.</p>
+</div>
+</div>
+<div class="section" id="caveats">
+<span id="caveats"></span><h2>Caveats<a class="headerlink" href="#caveats" title="Permalink to this headline">¶</a></h2>
+<p>This capability might need to be hidden behind a Kconfig flag
+because we won’t be able to provide functional implementations of
+<code class="docutils literal"><span class="pre">is_address_in_mmio()</span></code> for every chipset supported by coreboot from the
+start.</p>
+</div>
+<div class="section" id="security-considerations">
+<span id="security-considerations"></span><h2>Security Considerations<a class="headerlink" href="#security-considerations" title="Permalink to this headline">¶</a></h2>
+<p>The actual exploitability of the issue is unknown, but fixing it serves
+as defense in depth, similar to the
+<a class="reference external" href="https://review.coreboot.org/#/c/11519/">Memory Sinkhole mitigation</a> for
+older Intel chipsets.</p>
+</div>
+<div class="section" id="testing-plan">
+<span id="testing-plan"></span><h2>Testing Plan<a class="headerlink" href="#testing-plan" title="Permalink to this headline">¶</a></h2>
+<p>Manual testing can be conducted easily by creating a small payload that
+provokes the reaction. It should test all conditions that enable the
+address test (ie. the different BAR offsets if used by SMM handlers).</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../abi-data-consumption.html" class="btn btn-neutral float-right" title="ABI data consumption" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../timestamp.html" class="btn btn-neutral" title="Timestamps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

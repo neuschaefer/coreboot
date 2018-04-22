@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Frequency selection &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="../../index.html"/>
+        <link rel="up" title="Sandy Bridge Raminit" href="Sandybridge.html"/>
+        <link rel="next" title="Read training" href="Sandybridge_read.html"/>
+        <link rel="prev" title="Inoffical Documentation of Intel MCHBAR register space." href="SandyBridge_registers.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../timestamp.html">Timestamps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Sandybridge.html">Sandy Bridge Raminit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#definitions">Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#inoffical-register-documentation">(Inoffical) register documentation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Sandybridge.html#frequency-selection">Frequency selection</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sandy Bride - Frequency selection</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#definitions">Definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spd">SPD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#xmp-profiles">XMP profiles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#soft-fuses">Soft fuses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-name-hard-fuses-a-hard-fuses"><a name="hard_fuses"></a> Hard fuses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#a-name-devicetree-a-devicetree"><a name="devicetree"></a> Devicetree</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reference-clock">Reference clock</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sandy-bride-s-supported-frequencies">Sandy Bride’s supported frequencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ivybridge-s-supported-frequencies">Ivybridge’s supported frequencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiplier-selection">Multiplier selection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#read-training">Read training</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#debugging">Debugging</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Sandybridge.html">Sandy Bridge Raminit</a> &raquo;</li>
+        
+      <li>Frequency selection</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/Intel/NativeRaminit/Sandybridge_freq.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="frequency-selection">
+<span id="frequency-selection"></span><h1>Frequency selection<a class="headerlink" href="#frequency-selection" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<span id="introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This chapter explains the frequency selection done on Sandybride and Ivybridge.</p>
+</div>
+<div class="section" id="definitions">
+<span id="definitions"></span><h2>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h2>
+<p>| Symbol  | Description                                                       | Units      | Valid region |
+|———|——————————————————————-|————|————–|
+| SCK     | DRAM system clock cycle time                                      | s          | -            |
+| tCK     | DRAM system clock cycle time                                      | 1/256th ns | -            |
+| DCK     | Data clock cycle time: The time between two SCK clock edges       | s          | -            |
+| SPD     | Manufacturer set memory timings located on an EEPROM on every DIMM| bytes      | -            |
+| REFCK   | Reference clock, either 100 or 133                                | Mhz        | 100, 133     |
+| MULT    | DRAM PLL multiplier                                               | -          | [3-12]       |
+| XMP     | Extreme Memory Profiles                                           | -          | -            |</p>
+</div>
+<div class="section" id="spd">
+<span id="spd"></span><h2>SPD<a class="headerlink" href="#spd" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://de.wikipedia.org/wiki/Serial_Presence_Detect">SPD</a>
+located on every DIMM is factory program with various timings. One of them
+specifies the maximum clock frequency the DIMM should be used with. The
+operating frequency is stores as fixed point value (tCK), rounded to the next
+smallest supported operating frequency. Some
+<a class="reference external" href="https://de.wikipedia.org/wiki/Serial_Presence_Detect">SPD</a>
+contains additional and optional
+<a class="reference external" href="https://de.wikipedia.org/wiki/Extreme_Memory_Profile">XMP</a>
+data, that stores so called “performance” modes, that advertises higher clock
+frequencies.</p>
+</div>
+<div class="section" id="xmp-profiles">
+<span id="xmp-profiles"></span><h2>XMP profiles<a class="headerlink" href="#xmp-profiles" title="Permalink to this headline">¶</a></h2>
+<p>At time of writing coreboot’s raminit is able to parse XMP profile 1 and 2.
+Only <strong>XMP profile 1</strong> is being used in case it advertises:</p>
+<ul class="simple">
+<li>1.5V operating voltage</li>
+<li>The channel’s installed DIMM count doesn’t exceed the XMP coded limit</li>
+</ul>
+<p>In case the XMP profile doesn’t fullfill those limits, the regular SPD will be
+used.</p>
+<blockquote>
+<div><strong>Note:</strong> XMP Profiles are supported since coreboot 4.4.</div></blockquote>
+<p>It is possible to ignore the max DIMM count limit set by XMP profiles.
+By activating Kconfig option <code class="docutils literal"><span class="pre">NATIVE_RAMINIT_IGNORE_XMP_MAX_DIMMS</span></code> it is
+possible to install two DIMMs per channel, even if XMP tells you not to do.</p>
+<blockquote>
+<div><strong>Note:</strong> Ignoring XMP Profiles limit is supported since coreboot 4.7.</div></blockquote>
+</div>
+<div class="section" id="soft-fuses">
+<span id="soft-fuses"></span><h2>Soft fuses<a class="headerlink" href="#soft-fuses" title="Permalink to this headline">¶</a></h2>
+<p>Every board manufacturer does program “soft” fuses to indicate the maximum
+DRAM frequency supported. However, those fuses don’t set a limit in hardware
+and thus are called “soft” fuses, as it is possible to ignore them.</p>
+<blockquote>
+<div><strong>Note:</strong> Ignoring the fuses might cause system instability !</div></blockquote>
+<p>On Sandy Bride <em>CAPID0_A</em> is being read, and on Ivybridge <em>CAPID0_B</em> is being
+read. coreboot reads those registers and honors the limit in case the Kconfig
+option <code class="docutils literal"><span class="pre">CONFIG_NATIVE_RAMINIT_IGNORE_MAX_MEM_FUSES</span></code> wasn’t set.
+Power users that want to let their RAM run at DRAM’s “stock” frequency need to
+enable the Kconfig symbol.</p>
+<p>It is possible to override the soft fuses limit by using a board-specific
+<a class="reference external" href="#devicetree">devicetree</a> setting.</p>
+<blockquote>
+<div><strong>Note:</strong> Ignoring max mem freq. fuses is supported since coreboot 4.7.</div></blockquote>
+</div>
+<div class="section" id="a-name-hard-fuses-a-hard-fuses">
+<span id="a-name-hard-fuses-a-hard-fuses"></span><h2><a name="hard_fuses"></a> Hard fuses<a class="headerlink" href="#a-name-hard-fuses-a-hard-fuses" title="Permalink to this headline">¶</a></h2>
+<p>“Hard” fuses are programmed by Intel and limit the maximum frequency that can
+be used on a given CPU/board/chipset. At time of writing there’s no register
+to read this limit, before trying to set a given DRAM frequency. The memory PLL
+won’t lock, indicating that the chosen memory multiplier isn’t available. In
+this case coreboot tries the next smaller memory multiplier until the PLL will
+lock.</p>
+</div>
+<div class="section" id="a-name-devicetree-a-devicetree">
+<span id="a-name-devicetree-a-devicetree"></span><h2><a name="devicetree"></a> Devicetree<a class="headerlink" href="#a-name-devicetree-a-devicetree" title="Permalink to this headline">¶</a></h2>
+<p>The devicetree register <code class="docutils literal"><span class="pre">max_mem_clock_mhz</span></code> overrides the “soft” fuses set
+by the board manufacturer.</p>
+<p>By using this register it’s possible to force a minimum operating frequency.</p>
+</div>
+<div class="section" id="reference-clock">
+<span id="reference-clock"></span><h2>Reference clock<a class="headerlink" href="#reference-clock" title="Permalink to this headline">¶</a></h2>
+<p>While Sandybride supports 133 MHz reference clock (REFCK), Ivy Bridge also
+supports 100 MHz reference clock. The reference clock is multiplied by the DRAM
+multiplier to select the DRAM frequency (SCK) by the following formula:</p>
+<p>REFCK * MULT = 1 / DCK</p>
+<blockquote>
+<div><strong>Note:</strong> Since coreboot 4.6 Ivy Bridge supports 100MHz REFCK.</div></blockquote>
+</div>
+<div class="section" id="sandy-bride-s-supported-frequencies">
+<span id="sandy-bride-s-supported-frequencies"></span><h2>Sandy Bride’s supported frequencies<a class="headerlink" href="#sandy-bride-s-supported-frequencies" title="Permalink to this headline">¶</a></h2>
+<p>| SCK [Mhz]  | DDR [Mhz] | Mutiplier (MULT) | Reference clock (REFCK) | Comment       |
+|————|———–|——————|————————-|—————|
+| 400        | DDR3-800  | 3                | 133 MHz                 |               |
+| 533        | DDR3-1066 | 4                | 133 MHz                 |               |
+| 666        | DDR3-1333 | 5                | 133 MHz                 |               |
+| 800        | DDR3-1600 | 6                | 133 MHz                 |               |
+| 933        | DDR3-1866 | 7                | 133 MHz                 |               |
+| 1066       | DDR3-2166 | 8                | 133 MHz                 |               ||</p>
+</div>
+<div class="section" id="ivybridge-s-supported-frequencies">
+<span id="ivybridge-s-supported-frequencies"></span><h2>Ivybridge’s supported frequencies<a class="headerlink" href="#ivybridge-s-supported-frequencies" title="Permalink to this headline">¶</a></h2>
+<p>| SCK [Mhz]  | DDR [Mhz] | Mutiplier (MULT) | Reference clock (REFCK) | Comment       |
+|————|———–|——————|————————-|—————|
+| 400        | DDR3-800  | 3                | 133 MHz                 |               |
+| 533        | DDR3-1066 | 4                | 133 MHz                 |               |
+| 666        | DDR3-1333 | 5                | 133 MHz                 |               |
+| 800        | DDR3-1600 | 6                | 133 MHz                 |               |
+| 933        | DDR3-1866 | 7                | 133 MHz                 |               |
+| 1066       | DDR3-2166 | 8                | 133 MHz                 |               |
+| 700        | DDR3-1400 | 7                | 100 MHz                 | ‘1            |
+| 800        | DDR3-1600 | 8                | 100 MHz                 | ‘1            |
+| 900        | DDR3-1800 | 9                | 100 MHz                 | ‘1            |
+| 1000       | DDR3-2000 | 10               | 100 MHz                 | ‘1            |
+| 1100       | DDR3-2200 | 11               | 100 MHz                 | ‘1            |
+| 1200       | DDR3-2400 | 12               | 100 MHz                 | ‘1            ||</p>
+<blockquote>
+<div>‘1: since coreboot 4.6</div></blockquote>
+</div>
+<div class="section" id="multiplier-selection">
+<span id="multiplier-selection"></span><h2>Multiplier selection<a class="headerlink" href="#multiplier-selection" title="Permalink to this headline">¶</a></h2>
+<p>coreboot select the maximum frequency to operate at by the following formula:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>if devicetree&#39;s max_mem_clock_mhz &gt; 0:
+     freq_max := max_mem_clock_mhz
+else:
+     freq_max := soft_fuse_max_mhz
+
+for i in SPDs:
+     freq_max := MIN(freq_max, ddr_spd_max_mhz[i])```
+
+As you can see, by using DIMMs with different maximum DRAM frequencies, the 
+slowest DIMMs&#39; frequency will be selected, to prevent over-clocking it.
+
+The selected frequency gives the PLL multiplier to operate at. In case the PLL 
+locks (see Take me to [Hard fuses](#hard_fuses)) the frequency will be used for 
+all DIMMs. At this point it&#39;s not possible to change the multiplier again, 
+until the system has been powered off. In case the PLL doesn&#39;t lock, the next 
+smaller multiplier will be used until a working multiplier will be found.
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Sandybridge_read.html" class="btn btn-neutral float-right" title="Read training" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="SandyBridge_registers.html" class="btn btn-neutral" title="Inoffical Documentation of Intel MCHBAR register space." accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

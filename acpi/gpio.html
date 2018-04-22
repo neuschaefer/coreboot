@@ -1,0 +1,433 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>GPIO toggling in ACPI AML for coreboot &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="../index.html"/>
+        <link rel="next" title="libgfxinit - Native Graphics Initialization" href="../gfx/libgfxinit.html"/>
+        <link rel="prev" title="ABI data consumption" href="../abi-data-consumption.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../timestamp.html">Timestamps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">GPIO toggling in ACPI AML</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#platform-interface">Platform Interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#helper-routines">Helper routines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#implementation-details">Implementation Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#arguments-and-local-variables-management">Arguments and Local Variables Management</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../Intel/NativeRaminit/Sandybridge.html">Sandy Bridge Raminit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>GPIO toggling in ACPI AML for coreboot</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/acpi/gpio.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="gpio-toggling-in-acpi-aml-for-coreboot">
+<span id="gpio-toggling-in-acpi-aml-for-coreboot"></span><h1>GPIO toggling in ACPI AML for coreboot<a class="headerlink" href="#gpio-toggling-in-acpi-aml-for-coreboot" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="table-of-contents">
+<span id="table-of-contents"></span><h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Introduction</li>
+<li>Platform Interface</li>
+<li>Helper routines</li>
+<li>Implementation details</li>
+<li>Arguments and Local Variables Management</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<span id="introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>ACPI provides platform-independent interfaces enabling the operating
+system to perform power management for devices as well as the entire
+system. An operating system can simply call into Method()s implemented
+by the interface to request different power management operations. In
+order to be able to perform these operations, an interface might
+require toggling of GPIOs. e.g. a touchscreen device interface might
+require toggling of reset-gpio in order to take the device out of
+reset or to put it back into reset.</p>
+<p>Thus, any coreboot driver that implements such an ACPI interface might
+require the ability to toggle GPIOs. However, toggling of GPIO is not
+the same across different platforms and it will require the driver to
+depend upon platform to do the required work. This document presents a
+simple interface that can be used by any coreboot driver to generate
+ACPI AML code for reading or toggling platform GPIOs.</p>
+</div>
+<div class="section" id="platform-interface">
+<span id="platform-interface"></span><h2>Platform Interface<a class="headerlink" href="#platform-interface" title="Permalink to this headline">¶</a></h2>
+<p>All platforms that use drivers requiring ACPI AML code for GPIO
+interactions need to be implement the following functions:</p>
+<ol class="simple">
+<li>Return GPIO Rx value if it is acting as input
+int acpigen_soc_read_rx_gpio(unsigned int gpio_num)</li>
+<li>Return GPIO Tx value if it is acting as output
+int acpigen_soc_get_tx_gpio(unsigned int gpio_num)</li>
+<li>Set GPIO Tx value to 1 if it is acting as output
+int acpigen_soc_set_tx_gpio(unsigned int gpio_num)</li>
+<li>Set GPIO Tx value to 0 if it is acting as output
+int acpigen_soc_clear_tx_gpio(unsigned int gpio_num)</li>
+</ol>
+<p>Each of the above functions takes as input gpio_num which is the gpio
+number that needs to be read or toggled and returns an integer which
+is:</p>
+<ol class="simple">
+<li>Error = -1</li>
+<li>Success = 0</li>
+</ol>
+<p>Above callback functions are chosen to be implemented in C rather than
+adding them as AML code callbacks for the following reasons:</p>
+<ol class="simple">
+<li>It is easier to add error prints in C which will inform the
+developer that these callbacks are missing. It restricts debugging
+to coreboot logs.</li>
+<li>GPIO conversion from number to register offset can be easily done
+in C by reusing implemented functions rather than adding all the
+logic to AML code or depending upon complicated macros to be added
+to device-tree.</li>
+<li>Allows GPIO AML methods to be present under any device scope and
+gives SoC the flexibility to call them without any restrictions.</li>
+</ol>
+</div>
+<div class="section" id="helper-routines">
+<span id="helper-routines"></span><h2>Helper routines<a class="headerlink" href="#helper-routines" title="Permalink to this headline">¶</a></h2>
+<p>In order to relieve drivers of the task of implementing the same code
+for enabling/disabling Tx GPIOs based on the GPIO polarity, helper
+routines are provided which implement this common code and can be used
+directly in the driver routines:</p>
+<ol class="simple">
+<li>Enable Tx GPIO
+int acpigen_enable_tx_gpio(struct acpi_gpio gpio)</li>
+<li>Disable Tx GPIO
+int acpigen_disable_tx_gpio(struct acpi_gpio gpio)</li>
+</ol>
+<p>Both the above functions take as input struct acpi_gpio type and
+return -1 on error and 0 on success. These helper routines end up
+calling the platform specific acpigen_soc_{set,clear}_tx_gpio
+functions internally. Thus, all the ACPI AML calling conventions for
+the platform functions apply to these helper functions as well.</p>
+</div>
+<div class="section" id="implementation-details">
+<span id="implementation-details"></span><h2>Implementation Details<a class="headerlink" href="#implementation-details" title="Permalink to this headline">¶</a></h2>
+<p>ACPI library in coreboot will provide weak definitions for all the
+above functions with error messages indicating that these functions
+are being used. This allows drivers to conditionally make use of GPIOs
+based on device-tree entries or any other config option. It is
+recommended that the SoC code in coreboot should provide
+implementations of all the above functions generating ACPI AML code
+irrespective of them being used in any driver. This allows mainboards
+to use any drivers and take advantage of this common infrastructure.</p>
+<p>Platforms are restricted to using Local5, Local6 and Local7 variables
+only in implementations of the above functions. Any AML methods called
+by the above functions do not have any such restrictions on use of
+Local variables in AML code. Local0 is to be used for all get/read
+functions to return values. This means that the driver code should not
+make any assumptions about the values in Local5, Local6 and Local7
+variables.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span> <span class="o">**</span><span class="n">Function</span><span class="o">**</span>                   <span class="o">**</span><span class="n">Operation</span><span class="o">**</span>                <span class="o">**</span><span class="n">Return</span><span class="o">**</span>
+ <span class="n">acpigen_soc_read_rx_gpio</span>     <span class="n">Generate</span> <span class="n">ACPI</span> <span class="n">AML</span> <span class="n">code</span> <span class="n">to</span>      <span class="n">Error</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                              <span class="n">read</span> <span class="n">value</span> <span class="n">of</span> <span class="n">Rx</span> <span class="ow">in</span> <span class="n">Local0</span><span class="o">.</span>    <span class="n">Success</span> <span class="o">=</span> <span class="mi">0</span>
+ <span class="n">acpigen_soc_get_tx_gpio</span>      <span class="n">Generate</span> <span class="n">ACPI</span> <span class="n">AML</span> <span class="n">code</span> <span class="n">to</span>      <span class="n">Error</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                              <span class="n">get</span> <span class="n">value</span> <span class="n">of</span> <span class="n">Tx</span> <span class="ow">in</span> <span class="n">Local0</span><span class="o">.</span>     <span class="n">Success</span> <span class="o">=</span> <span class="mi">0</span>
+ <span class="n">acpigen_soc_set_tx_gpio</span>      <span class="n">Generate</span> <span class="n">ACPI</span> <span class="n">AML</span> <span class="n">code</span> <span class="n">to</span>      <span class="n">Error</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                              <span class="nb">set</span> <span class="n">Tx</span> <span class="n">to</span> <span class="mf">1.</span>                   <span class="n">Success</span> <span class="o">=</span> <span class="mi">0</span>
+ <span class="n">acpigen_soc_clear_tx_gpio</span>    <span class="n">Generate</span> <span class="n">ACPI</span> <span class="n">AML</span> <span class="n">code</span> <span class="n">to</span>      <span class="n">Error</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+                              <span class="nb">set</span> <span class="n">Tx</span> <span class="n">to</span> <span class="mf">0.</span>                   <span class="n">Success</span> <span class="o">=</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p>Ideally, the operation column in the above table should use one or
+more functions implemented by the platform in AML code library (like
+gpiolib.asl). In the example below SPC0 and GPC0 need to be
+implemented by the SoC in AML code library and they can be used by
+acpi_soc_set_tx_gpio to read and set bit in the appropriate register
+for the GPIO.</p>
+<p><strong>acpigen_soc_set_tx_gpio</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>uint64_t gpio_reg_offset = gpio_get_reg_offset(gpio_num);
+
+/* Store (\_SB.GPC0(gpio_reg_offset, Local5) */
+acpigen_write_store();
+acpigen_emit_namestring(“\\_SB.GPC0”);
+acpigen_write_integer(gpio_reg_offset);
+acpigen_emit_byte(LOCAL5_OP);
+
+
+/* Or (Local5, TX_BIT, Local5) */
+acpigen_write_or(LOCAL5_OP, TX_BIT, LOCAL5_OP);
+
+/* \_SB.SPC0(gpio_reg_offset, LOCAL5) */
+acpigen_emit_namestring(“\\_SB.SPC0”);
+acpigen_write_integer(gpio_reg_offset);
+acpigen_emit_byte(LOCAL5_OP);
+
+return 0;
+</pre></div>
+</div>
+<p><strong>acpigen_soc_get_tx_gpio</strong></p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>uint64_t gpio_reg_offset = gpio_get_reg_offset(gpio_num);
+
+
+/* Store (\_SB.GPC0(gpio_reg_offset, Local5) */
+acpigen_write_store();
+acpigen_emit_namestring(“\\_SB.GPC0”);
+acpigen_write_integer(gpio_reg_offset);
+acpigen_emit_byte(LOCAL5_OP);
+
+
+/*
+ * If (And (Local5, TX_BIT)) Store (One, Local0) Else Store (Zero,
+ * Local0)
+ */
+acpigen_write_if_and(Local5, TX_BIT);
+acpigen_write_store_args(ONE_OP, LOCAL0_OP);
+acpigen_pop_len();
+acpigen_write_else();
+acpigen_write_store_args(ZERO_OP, LOCAL0_OP);
+acpigen_pop_len();
+
+return 0;
+</pre></div>
+</div>
+<p>These are reference implementations and the platforms are free to
+implement these functions in any way they like. coreboot driver can
+then simply call into these functions to generate ACPI AML code to
+get/set/clear any GPIO. In order to decide whether GPIO operations are
+required, driver code can rely either on some config option or read
+device-tree to use any user-provided GPIOs.</p>
+</div>
+<div class="section" id="arguments-and-local-variables-management">
+<span id="arguments-and-local-variables-management"></span><h2>Arguments and Local Variables Management<a class="headerlink" href="#arguments-and-local-variables-management" title="Permalink to this headline">¶</a></h2>
+<p>Platform-defined functions can call methods using the same calling
+conventions provided by AML code. However, use of Local Variables is
+restricted to Local5, Local6 and Local7 unless they call into some
+other method. Called method can use any Local variables, Local0 -
+Local7. In case of functions expected to return back value to the
+caller, this value is expected to be returned in Local0.</p>
+<p>Driver code should not make any assumptions about the contents of
+Local5, Local6 and Local7 across callbacks to SoC code. If it makes a
+read or get call to SoC, the return value should be used from Local0
+on return. However, if it makes a set or clear call to SoC, the value
+in Local0 is undefined.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../gfx/libgfxinit.html" class="btn btn-neutral float-right" title="libgfxinit - Native Graphics Initialization" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../abi-data-consumption.html" class="btn btn-neutral" title="ABI data consumption" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

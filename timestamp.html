@@ -1,0 +1,457 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Timestamps &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="index.html"/>
+        <link rel="next" title="Dealing with Untrusted Input in SMM" href="technotes/2017-02-dealing-with-untrusted-input-in-smm.html"/>
+        <link rel="prev" title="Use of git submodules in coreboot" href="submodules.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Timestamps</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#table-of-contents">Table of Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#transition-from-cache-to-cbmem">Transition from cache to cbmem</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#data-structures-used">Data structures used</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cache-state">cache_state</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#table">table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#entries">entries</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#function-apis">Function APIs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#timestamp-init">timestamp_init</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timestamp-add">timestamp_add</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#timestamp-add-now">timestamp_add_now</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#use-test-cases">Use / Test Cases</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#case-1-timestamp-region-exists-fresh-boot-resume">Case 1: Timestamp Region Exists (Fresh Boot / Resume)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#case-2-no-timestamp-region-fresh-boot-cbmem-initialize-called-after-timestamp-init">Case 2: No timestamp region, fresh boot, cbmem_initialize called after timestamp_init</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#case-3-no-timestamp-region-fresh-boot-cbmem-initialize-called-before-timestamp-init">Case 3: No timestamp region, fresh boot, cbmem_initialize called before timestamp_init</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#case-4-no-timestamp-region-resume-cbmem-initialize-called-after-timestamp-init">Case 4: No timestamp region, resume, cbmem_initialize called after timestamp_init</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#case-5-no-timestamp-region-resume-cbmem-initialize-called-before-timestamp-init">Case 5: No timestamp region, resume, cbmem_initialize called before timestamp_init</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intel/NativeRaminit/Sandybridge.html">Sandy Bridge Raminit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Timestamps</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/timestamp.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="timestamps">
+<span id="timestamps"></span><h1>Timestamps<a class="headerlink" href="#timestamps" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="table-of-contents">
+<span id="table-of-contents"></span><h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h2>
+<p>Introduction</p>
+<ul class="simple">
+<li>Transition from cache to cbmem</li>
+</ul>
+<p>Data structures used</p>
+<ul class="simple">
+<li>cache_state</li>
+<li>table</li>
+<li>entries</li>
+</ul>
+<p>Function APIs</p>
+<ul class="simple">
+<li>timestamp_init</li>
+<li>timestamp_add</li>
+<li>timestamp_add_now</li>
+<li>timestamp_sync</li>
+</ul>
+<p>Use / Test Cases</p>
+<ul class="simple">
+<li>Case 1: Timestamp Region Exists</li>
+<li>Case 2: No timestamp region, fresh boot, cbmem_initialize called after timestamp_init</li>
+<li>Case 3: No timestamp region, fresh boot, cbmem_initialize called before timestamp_init</li>
+<li>Case 4: No timestamp region, resume, cbmem_initialize called after timestamp_init</li>
+<li>Case 5: No timestamp region, resume, cbmem_initialize called before timestamp_init</li>
+</ul>
+</div>
+<div class="section" id="introduction">
+<span id="introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>The aim of the timestamp library is to make it easier for different boards
+to  save timestamps in cbmem / stash (until cbmem is brought up) by
+providing a simple API to initialize, add and sync timestamps. In order
+to make the timestamps persistent and accessible from the kernel, we
+need to ensure that all the saved timestamps end up in cbmem under
+the CBMEM_ID_TIMESTAMP tag. However, until the cbmem area is available,
+the timestamps can be saved to a SoC-defined _timestamp region or in a
+local stage-specific stash. The work of identifying the right location for
+storing timestamps is done by the library and is not exposed to the user.</p>
+<p>Working of timestamp library from a user perspective can be outlined in
+the following steps:</p>
+<ol class="simple">
+<li>Initialize the base time and reset cbmem timestamp area</li>
+<li>Start adding timestamps</li>
+</ol>
+<p>Behind the scenes, the timestamp library takes care of:</p>
+<ol class="simple">
+<li>Identifying the correct location for storing timestamps (cbmem or timestamp
+region or local stash).</li>
+<li>Once cbmem is up, ensure that all timestamps are synced from timestamp
+region or local stash into the cbmem area.</li>
+<li>Add a new cbmem timestamp area based on whether a reset of the cbmem
+timestamp region is required or not.</li>
+</ol>
+<div class="section" id="transition-from-cache-to-cbmem">
+<span id="transition-from-cache-to-cbmem"></span><h3>Transition from cache to cbmem<a class="headerlink" href="#transition-from-cache-to-cbmem" title="Permalink to this headline">¶</a></h3>
+<p>To move timestamps from the cache to cbmem (and initialize the cbmem area in
+the first place), we use the CBMEM_INIT_HOOK infrastructure of coreboot.</p>
+<p>When cbmem is initialized, the hook is called, which creates the area,
+copies all timestamps to cbmem and disables the cache.</p>
+<p>After such a transition, timestamp_init() must not be run again.</p>
+</div>
+</div>
+<div class="section" id="data-structures-used">
+<span id="data-structures-used"></span><h2>Data structures used<a class="headerlink" href="#data-structures-used" title="Permalink to this headline">¶</a></h2>
+<p>The main structure that maintains information about the timestamp cache is:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">__packed</span> <span class="n">timestamp_cache</span> <span class="p">{</span>
+        <span class="n">uint16_t</span> <span class="n">cache_state</span><span class="p">;</span>
+        <span class="n">struct</span> <span class="n">timestamp_table</span> <span class="n">table</span><span class="p">;</span>
+        <span class="n">struct</span> <span class="n">timestamp_entry</span> <span class="n">entries</span><span class="p">[</span><span class="n">MAX_TIMESTAMP_CACHE</span><span class="p">];</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<div class="section" id="cache-state">
+<span id="cache-state"></span><h3>cache_state<a class="headerlink" href="#cache-state" title="Permalink to this headline">¶</a></h3>
+<p>The state of the cache is maintained by <code class="docutils literal"><span class="pre">cache_state</span></code> attribute which can
+be any one of the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">enum</span> <span class="p">{</span>
+        <span class="n">TIMESTAMP_CACHE_UNINITIALIZED</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">TIMESTAMP_CACHE_INITIALIZED</span><span class="p">,</span>
+        <span class="n">TIMESTAMP_CACHE_NOT_NEEDED</span><span class="p">,</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p>By default, if the cache is stored in local stash (bss area), then
+it will be reset to uninitialized state. However, if the cache is
+stored in timestamp region, then it might have garbage in any of the
+attributes. Thus, if the timestamp region is being used by any board, it is
+initialized to default values by the library.</p>
+<p>Once the cache is initialized, its state is set to
+<code class="docutils literal"><span class="pre">CACHE_INITIALIZED</span></code>. Henceforth, the calls to cache i.e. <code class="docutils literal"><span class="pre">timestamp_add</span></code>
+know that the state reflected is valid and timestamps can be directly
+saved in the cache.</p>
+<p>Once the cbmem area is up (i.e. call to <code class="docutils literal"><span class="pre">timestamp_sync_cache_to_cbmem</span></code>),
+we do not need to store the timestamps in local stash / timestamp area
+anymore. Thus, the cache state is set to <code class="docutils literal"><span class="pre">CACHE_NOT_NEEDED</span></code>, which allows
+<code class="docutils literal"><span class="pre">timestamp_add</span></code> to store all timestamps directly into the cbmem area.</p>
+</div>
+<div class="section" id="table">
+<span id="table"></span><h3>table<a class="headerlink" href="#table" title="Permalink to this headline">¶</a></h3>
+<p>This field is represented by a structure which provides overall
+information about the entries in the timestamp area:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">timestamp_table</span> <span class="p">{</span>
+        <span class="n">uint64_t</span>        <span class="n">base_time</span><span class="p">;</span>
+        <span class="n">uint32_t</span>        <span class="n">max_entries</span><span class="p">;</span>
+        <span class="n">uint32_t</span>        <span class="n">num_entries</span><span class="p">;</span>
+        <span class="n">struct</span> <span class="n">timestamp_entry</span> <span class="n">entries</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="o">/*</span> <span class="n">Variable</span> <span class="n">number</span> <span class="n">of</span> <span class="n">entries</span> <span class="o">*/</span>
+<span class="p">}</span> <span class="n">__packed</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>It indicates the base time for all timestamp entries, maximum number
+of entries that can be stored, total number of entries that currently
+exist and an entry structure to hold variable number of entries.</p>
+</div>
+<div class="section" id="entries">
+<span id="entries"></span><h3>entries<a class="headerlink" href="#entries" title="Permalink to this headline">¶</a></h3>
+<p>This field holds the details of each timestamp entry, upto a maximum
+of <code class="docutils literal"><span class="pre">MAX_TIMESTAMP_CACHE</span></code> which is defined as 16 entries. Each entry is
+defined by:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">struct</span> <span class="n">timestamp_entry</span> <span class="p">{</span>
+        <span class="n">uint32_t</span>        <span class="n">entry_id</span><span class="p">;</span>
+        <span class="n">uint64_t</span>        <span class="n">entry_stamp</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">__packed</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">entry_id</span></code> holds the timestamp id corresponding to this entry and
+<code class="docutils literal"><span class="pre">entry_stamp</span></code> holds the actual timestamp.</p>
+<p>For timestamps stored in the cbmem area, a <code class="docutils literal"><span class="pre">timestamp_table</span></code> is allocated
+with space for <code class="docutils literal"><span class="pre">MAX_TIMESTAMPS</span></code> equal to 30. Thus, the cbmem area holds
+<code class="docutils literal"><span class="pre">base_time</span></code>, <code class="docutils literal"><span class="pre">max_entries</span></code> (which is 30), current number of entries and the
+actual entries represented by <code class="docutils literal"><span class="pre">timestamp_entry</span></code>.</p>
+</div>
+</div>
+<div class="section" id="function-apis">
+<span id="function-apis"></span><h2>Function APIs<a class="headerlink" href="#function-apis" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="timestamp-init">
+<span id="timestamp-init"></span><h3>timestamp_init<a class="headerlink" href="#timestamp-init" title="Permalink to this headline">¶</a></h3>
+<p>This function initializes the timestamp cache and should be run as early
+as possible. On platforms with SRAM, this might mean in bootblock, on
+x86 with its CAR backed memory in romstage, this means romstage before
+memory init.</p>
+</div>
+<div class="section" id="timestamp-add">
+<span id="timestamp-add"></span><h3>timestamp_add<a class="headerlink" href="#timestamp-add" title="Permalink to this headline">¶</a></h3>
+<p>This function accepts from user a timestamp id and time to record in the
+timestamp table. It stores the entry in the appropriate table in cbmem
+or <code class="docutils literal"><span class="pre">_timestamp</span></code> region or local stash.</p>
+</div>
+<div class="section" id="timestamp-add-now">
+<span id="timestamp-add-now"></span><h3>timestamp_add_now<a class="headerlink" href="#timestamp-add-now" title="Permalink to this headline">¶</a></h3>
+<p>This function calls <code class="docutils literal"><span class="pre">timestamp_add</span></code> with user-provided id and current time.</p>
+</div>
+</div>
+<div class="section" id="use-test-cases">
+<span id="use-test-cases"></span><h2>Use / Test Cases<a class="headerlink" href="#use-test-cases" title="Permalink to this headline">¶</a></h2>
+<p>The following cases have been considered while designing the timestamp
+library. It is important to ensure that any changes made to this library satisfy
+each of the following use cases:</p>
+<div class="section" id="case-1-timestamp-region-exists-fresh-boot-resume">
+<span id="case-1-timestamp-region-exists-fresh-boot-resume"></span><h3>Case 1: Timestamp Region Exists (Fresh Boot / Resume)<a class="headerlink" href="#case-1-timestamp-region-exists-fresh-boot-resume" title="Permalink to this headline">¶</a></h3>
+<p>In this case, the library needs to call <code class="docutils literal"><span class="pre">timestamp_init</span></code> as early as possible to
+enable the timestamp cache. Once cbmem is available, the values will be
+transferred automatically.</p>
+<p>All regions are automatically reset on initialization.</p>
+</div>
+<div class="section" id="case-2-no-timestamp-region-fresh-boot-cbmem-initialize-called-after-timestamp-init">
+<span id="case-2-no-timestamp-region-fresh-boot-cbmem-initialize-called-after-timestamp-init"></span><h3>Case 2: No timestamp region, fresh boot, cbmem_initialize called after timestamp_init<a class="headerlink" href="#case-2-no-timestamp-region-fresh-boot-cbmem-initialize-called-after-timestamp-init" title="Permalink to this headline">¶</a></h3>
+<p><code class="docutils literal"><span class="pre">timestamp_init</span></code> will set up a local cache. cbmem must be initialized before that
+cache vanishes - as happens when jumping to the next stage.</p>
+</div>
+<div class="section" id="case-3-no-timestamp-region-fresh-boot-cbmem-initialize-called-before-timestamp-init">
+<span id="case-3-no-timestamp-region-fresh-boot-cbmem-initialize-called-before-timestamp-init"></span><h3>Case 3: No timestamp region, fresh boot, cbmem_initialize called before timestamp_init<a class="headerlink" href="#case-3-no-timestamp-region-fresh-boot-cbmem-initialize-called-before-timestamp-init" title="Permalink to this headline">¶</a></h3>
+<p>This case is not supported right now, just don’t call <code class="docutils literal"><span class="pre">timestamp_init</span></code> after
+<code class="docutils literal"><span class="pre">cbmem_initialize</span></code>. (Patches to make this more robust are welcome.)</p>
+</div>
+<div class="section" id="case-4-no-timestamp-region-resume-cbmem-initialize-called-after-timestamp-init">
+<span id="case-4-no-timestamp-region-resume-cbmem-initialize-called-after-timestamp-init"></span><h3>Case 4: No timestamp region, resume, cbmem_initialize called after timestamp_init<a class="headerlink" href="#case-4-no-timestamp-region-resume-cbmem-initialize-called-after-timestamp-init" title="Permalink to this headline">¶</a></h3>
+<p>We always reset the cbmem region before using it, so pre-suspend timestamps
+will be gone.</p>
+</div>
+<div class="section" id="case-5-no-timestamp-region-resume-cbmem-initialize-called-before-timestamp-init">
+<span id="case-5-no-timestamp-region-resume-cbmem-initialize-called-before-timestamp-init"></span><h3>Case 5: No timestamp region, resume, cbmem_initialize called before timestamp_init<a class="headerlink" href="#case-5-no-timestamp-region-resume-cbmem-initialize-called-before-timestamp-init" title="Permalink to this headline">¶</a></h3>
+<p>We always reset the cbmem region before using it, so pre-suspend timestamps
+will be gone.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="technotes/2017-02-dealing-with-untrusted-input-in-smm.html" class="btn btn-neutral float-right" title="Dealing with Untrusted Input in SMM" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="submodules.html" class="btn btn-neutral" title="Use of git submodules in coreboot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

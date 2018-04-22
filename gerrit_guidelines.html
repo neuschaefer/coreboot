@@ -1,0 +1,495 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>coreboot Gerrit Etiquette and Guidelines &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="index.html"/>
+        <link rel="next" title="The coreboot build system" href="build_system.html"/>
+        <link rel="prev" title="coreboot Lesson 2: Submitting a patch to coreboot.org" href="Lesson2.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Gerrit Etiquette and Guidelines</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#summary">Summary:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#more-detail">More detail:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommendations-for-gerrit-activity">Recommendations for gerrit activity:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#expectations-contributors-should-have">Expectations contributors should have:</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timestamp.html">Timestamps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intel/NativeRaminit/Sandybridge.html">Sandy Bridge Raminit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>coreboot Gerrit Etiquette and Guidelines</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/gerrit_guidelines.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="coreboot-gerrit-etiquette-and-guidelines">
+<span id="coreboot-gerrit-etiquette-and-guidelines"></span><h1>coreboot Gerrit Etiquette and Guidelines<a class="headerlink" href="#coreboot-gerrit-etiquette-and-guidelines" title="Permalink to this headline">¶</a></h1>
+<p>The following rules are the requirements for behavior in the coreboot
+codebase in gerrit. These have mainly been unwritten rules up to this
+point, and should be familiar to most users who have been active in
+coreboot for a period of time. Following these rules will help reduce
+friction in the community.</p>
+<p>Note that as with many rules, there are exceptions. Some have been noted
+in the ‘More Detail’ section. If you feel there is an exception not listed
+here, please discuss it in the mailing list to get this document  updated.
+Don’t just assume that it’s okay, even if someone on IRC says it is.</p>
+<div class="section" id="summary">
+<span id="summary"></span><h2>Summary:<a class="headerlink" href="#summary" title="Permalink to this headline">¶</a></h2>
+<p>These are the expectations for committing, reviewing, and submitting code
+into coreboot git and gerrit. While breaking individual rules may not have
+immediate consequences, the coreboot leadership may act on repeated or
+flagrant violations with or without notice.</p>
+<ul class="simple">
+<li>Don’t violate the licenses.</li>
+<li>Let non-trivial patches sit in a review state for at least 24 hours
+before submission.</li>
+<li>Try to coordinate with platform maintainers when making changes to
+platforms.</li>
+<li>If you give a patch a -2, you are responsible for giving concrete
+recommendations for what could be changed to resolve the issue the patch
+addresses.</li>
+<li>Don’t modify other people’s patches without their consent.</li>
+<li>Be respectful to others when commenting.</li>
+<li>Don’t submit patches that you know will break other platforms.</li>
+</ul>
+</div>
+<div class="section" id="more-detail">
+<span id="more-detail"></span><h2>More detail:<a class="headerlink" href="#more-detail" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Don’t violate the licenses. If you’re submitting code that you didn’t
+write yourself, make sure the license is compatible with the license of the
+project you’re submitting the changes to. If you’re submitting code that
+you wrote that might be owned by your employer, make sure that your
+employer is aware and you are authorized to submit the code. For
+clarification, see the Developer’s Certificate of Origin in the coreboot
+<a class="reference external" href="https://www.coreboot.org/Development_Guidelines#Sign-off_Procedure">Signed-off-by policy</a>.</li>
+<li>Let non-trivial patches sit in a review state for at least 24 hours
+before submission. Remember that there are coreboot developers in timezones
+all over the world, and everyone should have a chance to contribute.
+Trivial patches would be things like whitespace changes or spelling fixes.
+In general, small changes that don’t impact the final binary output. The
+24-hour period would start at submission, and would be restarted at any
+update which significantly changes any part of the patch. Patches can be
+‘Fast-tracked’ and submitted in under this 24 hour with the agreement of at
+least 3 +2 votes.</li>
+<li>Do not +2 patches that you authored or own, even for something as trivial
+as whitespace fixes. When working on your own patches, it’s easy to
+overlook something like accidentally updating file permissions or git
+submodule commit IDs. Let someone else review the patch. An exception to
+this would be if two people worked in the patch together. If both +2 the
+patch, that is acceptable, as each is giving a +2 to the other’s work.</li>
+<li>Try to coordinate with platform maintainers and other significant
+contributors to the code when making changes to platforms. The platform
+maintainers are the users who initially pushed the code for that platform,
+as well as users who have made significant changes to a platform. To find
+out who maintains a piece of code, please use util/scripts/maintainers.go
+or refer to the original author of the code in git log.</li>
+<li>If you give a patch a -2, you are responsible for giving concrete
+recommendations for what could be changed to resolve the issue the patch
+addresses. If you feel strongly that a patch should NEVER be merged, you
+are responsible for defending your position and listening to other points
+of view. Giving a -2 and walking away is not acceptable, and may cause your
+-2 to be removed by the coreboot leadership after no less than a week. A
+notification that the -2 will be removed unless there is a response will
+be sent out at least 2 days before it is removed.</li>
+<li>Don’t modify other people’s patches unless you have coordinated this with
+the owner of that patch. Not only is this considered rude, but your changes
+could be unintentionally lost. An exception to this would be for patches
+that have not been updated for more than 90 days. In that case, the patch
+can be taken over if the original author does not respond to requests for
+updates. Alternatively, a new patch can be pushed with the original
+content, and both patches should be updated to reference the other.</li>
+<li>Be respectful to others when commenting on patches. Comments should
+be kept to the code, and should be kept in a polite tone. We are a
+worldwide community and English is a difficult language. Assume your
+colleagues are intelligent and do not intend disrespect. Resist the urge to
+retaliate against perceived verbal misconduct, such behavior is not
+conducive to getting patches merged.</li>
+<li>Don’t submit code that you know will break other platforms. If your patch
+affects code that is used by other platforms, it should be compatible with
+those platforms. While it would be nice to update any other platforms, you
+must at least provide a path that will allow other platforms to continue
+working.</li>
+</ul>
+</div>
+<div class="section" id="recommendations-for-gerrit-activity">
+<span id="recommendations-for-gerrit-activity"></span><h2>Recommendations for gerrit activity:<a class="headerlink" href="#recommendations-for-gerrit-activity" title="Permalink to this headline">¶</a></h2>
+<p>These guidelines are less strict than the ones listed above. These are more
+of the “good idea” variety. You are requested to follow the below
+guidelines, but there will probably be no actual consequences if they’re
+not followed. That said, following the recommendations below will speed up
+review of your patches, and make the members of the community do less work.</p>
+<ul class="simple">
+<li>Each patch should be kept to one logical change, which should be
+described in the title of the patch. Unrelated changes should be split out
+into separate patches. Fixing whitespace on a line you’re editing is
+reasonable. Fixing whitespace around the code you’re working on should be a
+separate ‘cleanup’ patch. Larger patches that touch several areas are fine,
+so long as they are one logical change. Adding new chips and doing code
+cleanup over wide areas are two examples of this.</li>
+<li>Test your patches before submitting them to gerrit. It’s also appreciated
+if you add a line to the commit message describing how the patch was
+tested. This prevents people from having to ask whether and how the patch
+was tested. Examples of this sort of comment would be ‘TEST=Built
+platform’ or ‘Tested by building and booting platform’.  Stating that the
+patch was not tested is also fine, although you might be asked to do some
+testing in cases where that would be reasonable.</li>
+<li>Take advantage of the lint tools to make sure your patches don’t contain
+trivial mistakes. By running ‘make gitconfig’, the lint-stable tools are
+automatically put in place and will test your patches before they are
+committed. As a violation of these tools will cause the jenkins build test
+to fail, it’s to your advantage to test this before pushing to gerrit.</li>
+<li>Don’t submit patch trains longer than around 20 patches unless you
+understand how to manage long patch trains. Long patch trains can become
+difficult to handle and tie up the build servers for long periods of time
+if not managed well. Rebasing a patch train over and over as you fix
+earlier patches in the train can hide comments, and make people review the
+code multiple times to see if anything has changed between revisions. When
+pushing long patch trains, it is recommended to only push the full patch
+train once - the initial time, and only to rebase three or four patches at
+a time.</li>
+<li>Run ‘make what-jenkins-does’ locally on patch trains before submitting.
+This helps verify that the patch train won’t tie up the jenkins builders
+for no reason if there are failing patches in the train. For running
+parallel builds, you can specify the number of cores to use by setting the
+the CPUS environment variable. Example:
+make what-jenkins-does CPUS=8</li>
+<li>Use a topic when pushing a train of patches. This groups the commits
+together so people can easily see the connection at the top level of
+gerrit. Topics can be set for individual patches in gerrit by going into
+the patch and clicking on the icon next to the topic line. Topics can also
+be set when you push the patches into gerrit. For example, to push a set of
+commits with the the i915-kernel-x60 set, use the command:
+git push origin HEAD:refs/for/master/i915-kernel-x60</li>
+<li>If one of your patches isn’t ready to be merged, make sure it’s obvious
+that you don’t feel it’s ready for merge yet. The preferred way to show
+this is by marking in the commit message that it’s not ready until X. The
+commit message can be updated easily when it’s ready to be pushed.
+Examples of this are “WIP: title” or “[NEEDS_TEST]: title”.  Another way to
+mark the patch as not ready would be to give it a -1 or -2 review, but
+isn’t as obvious as the commit message. These patches can also be pushed as
+drafts as shown in the next guideline.</li>
+<li>When pushing patches that are not for submission, these should be marked
+as such. This can be done in the title ‘[DONOTSUBMIT]’, or can be pushed as
+draft commits, so that only explicitly added reviewers will see them. These
+sorts of patches are frequently posted as ideas or RFCs for the community
+to look at. To push a draft, use the command:
+git push origin HEAD:refs/drafts/master</li>
+<li>Respond to anyone who has taken the time to review your patches, even if
+it’s just to say that you disagree. While it may seem annoying to address a
+request to fix spelling or ‘trivial’ issues, it’s generally easy to handle
+in gerrit’s built-in editor. If you do use the built-in editor, remember to
+get that change to your local copy before re-pushing. It’s also acceptable
+to add fixes for these sorts of comments to another patch, but it’s
+recommended that that patch be pushed to gerrit before the initial patch
+gets submitted.</li>
+<li>Consider breaking up large individual patches into smaller patches
+grouped by areas. This makes the patches easier to review, but increases
+the number of patches. The way you want to handle this is a personal
+decision, as long as each patch is still one logical change.</li>
+<li>If you have an interest in a particular area or mainboard, set yourself
+up as a ‘maintainer’ of that area by adding yourself to the MAINTAINERS
+file in the coreboot root directory. Eventually, this should automatically
+add you as a reviewer when an area that you’re listed as a maintainer is
+changed.</li>
+<li>Submit mainboards that you’re working on to the board-status repo. This
+helps others and shows that these mainboards are currently being
+maintained. At some point, boards that are not up to date in the
+board-status repo will probably end up getting removed from the coreboot
+master branch.</li>
+<li>Abandon patches that are no longer useful, or that you don’t intend to
+keep working on to get submitted.</li>
+<li>Bring attention to patches that you would like reviewed. Add reviewers,
+ask for reviewers on IRC or even just rebase it against the current
+codebase to bring it to the top of the gerrit list. If you’re not sure who
+would be a good reviewer, look in the MAINTAINERS file or git history of
+the files that you’ve changed, and add those people.</li>
+<li>Familiarize yourself with the coreboot <a class="reference external" href="https://www.coreboot.org/Git#Commit_messages">commit message
+guidelines</a>, before pushing
+patches. This will help to keep annoying requests to fix your commit
+message to a minimum.</li>
+<li>If there have been comments or discussion on a patch, verify that the
+comments have been addressed before giving a +2. If you feel that a comment
+is invalid, please respond to that comment instead of just ignoring it.</li>
+<li>Be conscientious when reviewing patches. As a reviewer who approves (+2)
+a patch, you are responsible for the patch and the effect it has on the
+codebase. In the event that the patch breaks things, you are expected to
+be actively involved in the cleanup effort. This means you shouldn’t +2 a
+patch just because you trust the author of a patch - Make sure you
+understand what the implications of a patch might be, or leave the review
+to others. Partial reviews, reviewing code style, for example, can be given
+a +1 instead of a +2. This also applies if you think the patch looks good,
+but may not have the experience to know if there may be unintended
+consequences.</li>
+<li>If there is still ongoing discussion to a patch, try to wait for a
+conclusion to the discussion before submitting it to the tree. If you feel
+that someone is just bikeshedding, maybe just state that and give a time
+that the patch will be submitted if no new objections are raised.</li>
+<li>When working with patch trains, for minor requests it’s acceptable to
+create a fix addressing a comment in another patch at the end of the patch
+train. This minimizes rebases of the patch train while still addressing the
+request. For major problems where the change doesn’t work as intended or
+breaks other platforms, the change really needs to go into the original
+patch.</li>
+<li>When bringing in a patch from another git repo, update the original
+git/gerrit tags by prepending the lines with ‘Original-‘.  Marking
+the original text this way makes it much easier to tell what changes
+happened in which repository. This applies to these lines, not the actual
+commit message itself:
+Commit-Id:
+Change-Id:
+Signed-off-by:
+Reviewed-on:
+Tested-by:
+Reviewed-by:
+The script ‘util/gitconfig/rebase.sh’ can be used to help automate this.
+Other tags such as ‘Commit-Queue’ can simply be removed.</li>
+</ul>
+</div>
+<div class="section" id="expectations-contributors-should-have">
+<span id="expectations-contributors-should-have"></span><h2>Expectations contributors should have:<a class="headerlink" href="#expectations-contributors-should-have" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Don’t expect that people will review your patch unless you ask them to.
+Adding other people as reviewers is the easiest way. Asking for reviews for
+individual patches in the IRC channel, or by sending a direct request to an
+individual through your favorite messenger is usually the best way to get a
+patch reviewed quickly.</li>
+<li>Don’t expect that your patch will be submitted immediately after getting
+a +2. As stated previously, non-trivial patches should wait at least 24
+hours before being submitted. That said, if you feel that your patch or
+series of patches has been sitting longer than needed, you can ask for it
+to be submitted on IRC, or comment that it’s ready for submission in the
+patch. This will move it to the top of the list where it’s more likely to
+be noticed and acted upon.</li>
+<li>Reviews are about the code. It’s easy to take it personally when someone
+is criticising your code, but the whole idea is to get better code into our
+codebase. Again, this also applies in the other direction: review code,
+criticize code, but don’t make it personal.</li>
+</ul>
+<p>Requests for clarification and suggestions for updates to these guidelines
+should be sent to the coreboot mailing list at <a class="reference external" href="/mailto:coreboot&#64;coreboot.org">coreboot&#64;coreboot.org</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="build_system.html" class="btn btn-neutral float-right" title="The coreboot build system" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Lesson2.html" class="btn btn-neutral" title="coreboot Lesson 2: Submitting a patch to coreboot.org" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

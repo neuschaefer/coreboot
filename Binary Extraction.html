@@ -1,0 +1,294 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Intel IFD Binary Extraction Tutorial &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="timestamp.html">Timestamps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Intel/NativeRaminit/Sandybridge.html">Sandy Bridge Raminit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Intel IFD Binary Extraction Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/Binary Extraction.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="intel-ifd-binary-extraction-tutorial">
+<span id="intel-ifd-binary-extraction-tutorial"></span><h1>Intel IFD Binary Extraction Tutorial<a class="headerlink" href="#intel-ifd-binary-extraction-tutorial" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="part-1-extracting-binaries">
+<span id="part-1-extracting-binaries"></span><h2>Part 1: Extracting Binaries<a class="headerlink" href="#part-1-extracting-binaries" title="Permalink to this headline">¶</a></h2>
+<p>To begin extracting the binaries, first create a directory labeled “binaries”
+in the coreboot directory (i.e. /path/to/coreboot/binaries/).</p>
+<p>Now, execute the following commands to extract the binaries from a ROM image.
+<strong>Note:</strong> Make sure you are in the root coreboot directory.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coreboot</span><span class="o">/</span><span class="n">util</span><span class="o">/</span><span class="n">ifdtool</span>
+<span class="o">./</span><span class="n">ifdtool</span> <span class="n">COREBOOT_IMAGE</span>
+<span class="o">./</span><span class="n">ifdtool</span> <span class="o">-</span><span class="n">d</span> <span class="n">COREBOOT_IMAGE</span>
+<span class="o">./</span><span class="n">ifdtool</span> <span class="o">-</span><span class="n">x</span> <span class="n">COREBOOT_IMAGE</span>
+</pre></div>
+</div>
+<p>In the above steps, COREBOOT_IMAGE is the name of the ROM image to extract the
+binaries from, including the file path (ex. /build/coreboot.rom).</p>
+<p>Copy the extracted .bin files to the binaries directory you created previously.
+<strong>Note:</strong> You may want to rename your various .bin files to more clearly
+indicate what they are and their purpose.</p>
+<p>To extract the mrc.bin, move to the /coreboot/build directory and run the
+following command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coreboot</span><span class="o">/</span><span class="n">build</span><span class="o">/</span>
+<span class="o">./</span><span class="n">cbfstool</span> <span class="n">COREBOOT_IMAGE</span> <span class="n">extract</span> <span class="o">-</span><span class="n">n</span> <span class="n">mrc</span><span class="o">.</span><span class="n">bin</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">destination</span><span class="o">/</span><span class="n">filename</span>
+</pre></div>
+</div>
+<p>where COREBOOT_IMAGE is the filepath to the ROM image (same image as above),
+/path/to/destination is the filepath to the destination directory and filename
+is the output filename. An example command is given below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">./</span><span class="n">cbfstool</span> <span class="n">coreboot</span><span class="o">.</span><span class="n">rom</span> <span class="n">extract</span> <span class="o">-</span><span class="n">n</span> <span class="n">mrc</span><span class="o">.</span><span class="n">bin</span> <span class="o">-</span><span class="n">f</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coreboot</span><span class="o">/</span><span class="n">binaries</span><span class="o">/</span><span class="n">mrc</span><span class="o">.</span><span class="n">bin</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="part-2-using-extract-blobs-sh">
+<span id="part-2-using-extract-blobs-sh"></span><h2>Part 2: Using extract_blobs.sh<a class="headerlink" href="#part-2-using-extract-blobs-sh" title="Permalink to this headline">¶</a></h2>
+<p>To simplify some of the steps above, there is a script in the
+/path/to/coreboot/util/chromeos/ directory called extract_blobs.sh what will
+extract the flashdescriptor.bin and intel_me.bin files.</p>
+<p>To run this script, switch to the /path/to/coreboot/util/chromeos/ directory
+and execute the script providing a coreboot image as an argument.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">coreboot</span><span class="o">/</span><span class="n">util</span><span class="o">/</span><span class="n">chromeos</span><span class="o">/</span>
+<span class="o">./</span><span class="n">extract_blobs</span><span class="o">.</span><span class="n">sh</span> <span class="n">COREBOOT_IMAGE</span>
+</pre></div>
+</div>
+<p>Executing those commands will result in two binary blobs to appear in the
+/path/to/coreboot/util/chromeos/ directory under the names
+‘flashdescriptor.bin’ and ‘me.bin’.</p>
+</div>
+<div class="section" id="part-3-changing-the-coreboot-configuration-settings">
+<span id="part-3-changing-the-coreboot-configuration-settings"></span><h2>Part 3: Changing the coreboot configuration settings<a class="headerlink" href="#part-3-changing-the-coreboot-configuration-settings" title="Permalink to this headline">¶</a></h2>
+<p>To begin using the binaries extracted above, enable the use of binary
+repositories in the menuconfig. From the main coreboot directory, run
+‘make menuconfig’. Select “General Setup”, then select “Allow use of
+binary-only repository”, then exit to the main menu.</p>
+<p>To configure the ROM image for a specific board, select “Mainboard”. Select
+“Mainboard vendor” and scroll to the correct vendor. Then select “Mainboard
+model” and select the name of the board model. Exit back to the main menu.</p>
+<p>To add the binaries you extracted, select “Chipset”. Scroll and select “Add a
+System Agent Binary” and set the filepath to your mrc.bin file’s filepath.
+Scroll and select “Add Intel descriptor.bin file” and type the filepath for
+your descriptor.bin file. Scroll down and select “Add Intel ME/TXE firmware
+file” and type the filepath for your ME file. Exit to the main menu.</p>
+<p>Select “Exit”, and select “Yes” when prompted to save your configuration.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

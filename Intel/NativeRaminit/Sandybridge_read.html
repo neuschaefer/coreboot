@@ -1,0 +1,387 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Read training &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../../genindex.html"/>
+        <link rel="search" title="Search" href="../../search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="../../index.html"/>
+        <link rel="up" title="Sandy Bridge Raminit" href="Sandybridge.html"/>
+        <link rel="prev" title="Frequency selection" href="Sandybridge_freq.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../timestamp.html">Timestamps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../gfx/libgfxinit.html">Native Graphics Initialization with libgfxinit</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="Sandybridge.html">Sandy Bridge Raminit</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#definitions">Definitions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#inoffical-register-documentation">(Inoffical) register documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#frequency-selection">Frequency selection</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="Sandybridge.html#read-training">Read training</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sandy Bride - Read training</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#definitions">Definitions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hardware">Hardware</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#io-phase">IO phase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#io-delay">IO delay</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#algorithm">Algorithm</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#fine-adjustment">Fine adjustment</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="Sandybridge.html#smbios-type-17">SMBIOS type 17</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Sandybridge.html#mrc-cache">MRC cache</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Sandybridge.html#error-handling">Error handling</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Sandybridge.html#debugging">Debugging</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="Sandybridge.html">Sandy Bridge Raminit</a> &raquo;</li>
+        
+      <li>Read training</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/Intel/NativeRaminit/Sandybridge_read.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="read-training">
+<span id="read-training"></span><h1>Read training<a class="headerlink" href="#read-training" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction">
+<span id="introduction"></span><h2>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h2>
+<p>This chapter explains the read training sequence done on Sandy Bride and
+Ivy Bridge memory initialization.</p>
+<p>Read training is done to compensate the skew between DQS and SCK and to find
+the smallest supported roundtrip delay.</p>
+<p>Every board does have a vendor depended routing topology, and can be equip
+with any combination of DDR3 memory modules, that introduces different
+skew between the memory lanes. With DDR3 a “Fly-By” routing topology
+has been introduced, that makes the biggest part of DQS-SCK skew.
+The memory code measures the actual skew and actives delay gates,
+that will “compensate” the skew.</p>
+<p>When in read training the DRAM and the controller are placed in a special mode.
+On every read instruction the DRAM outputs a predefined pattern and the memory
+controller samples the DQS after a given delay. As the pattern is known, the
+actual delay of every lane can be measured.</p>
+<p>The values programmed in read training effect DRAM-to-MC transfers only !</p>
+</div>
+<div class="section" id="definitions">
+<span id="definitions"></span><h2>Definitions<a class="headerlink" href="#definitions" title="Permalink to this headline">¶</a></h2>
+<p>| Symbol  | Description                                                       | Units      | Valid region |
+|———|——————————————————————-|————|————–|
+| SCK     | DRAM system clock cycle time                                      | s          | -            |
+| tCK     | DRAM system clock cycle time                                      | 1/256th ns | -            |
+| DCK     | Data clock cycle time: The time between two SCK clock edges       | s          | -            |
+| timA    | IO phase: The phase delay of the IO signals                       | 1/64th DCK | [0-512)      |
+| SPD     | Manufacturer set memory timings located on an EEPROM on every DIMM| bytes      | -            |
+| REFCK   | Reference clock, either 100 or 133                                | Mhz        | 100, 133     |
+| MULT    | DRAM PLL multiplier                                               | -          | [3-12]       |
+| XMP     | Extreme Memory Profiles                                           | -          | -            |
+| DQS     | Data Strobe signal used to sample all lane’s DQ signals           | -          | -            |</p>
+</div>
+<div class="section" id="hardware">
+<span id="hardware"></span><h2>Hardware<a class="headerlink" href="#hardware" title="Permalink to this headline">¶</a></h2>
+<p>The hardware does have delay logic blocks that can delay the DQ / DQS of a
+lane/rank by one or multiple clock cylces and it does have delay logic blocks
+that can delay the signal by a multiple of 1/64th DCK per lane.</p>
+<p>All delay values can be controlled via software by writing registers in the
+MCHBAR.</p>
+</div>
+<div class="section" id="io-phase">
+<span id="io-phase"></span><h2>IO phase<a class="headerlink" href="#io-phase" title="Permalink to this headline">¶</a></h2>
+<p>The IO phase can be adjusted in [0-512) * 1/64th DCK. Incrementing it by 64 is
+the same as Incrementing IO delay by 1.</p>
+</div>
+<div class="section" id="io-delay">
+<span id="io-delay"></span><h2>IO delay<a class="headerlink" href="#io-delay" title="Permalink to this headline">¶</a></h2>
+<p>Delays the DQ / DQS signal by one or multiple clock cycles.</p>
+<div class="section" id="roundtrip-time">
+<span id="roundtrip-time"></span><h3>Roundtrip time<a class="headerlink" href="#roundtrip-time" title="Permalink to this headline">¶</a></h3>
+<p>The roundtrip time is the time the memory controller waits for data arraving
+after a read has been issued. Due to clock-domain crossings, multiple
+delay instances and phase interpolators, the signal runtime to DRAM and back
+to memory controller defaults to 55 DCKs. The real roundtrip time has to be
+measured.</p>
+<p>After a read command has been issued, a counter counts down until zero has been
+reached and activates the input buffers.</p>
+<p>The following pictures shows the relationship between those three values.
+The picture was generated from 16 IO delay values times 64 timA values.
+The highest IO delay was set on the right-hand side, while the last block
+on the left-hand side has zero IO delay.</p>
+<p>** roundtrip 55 DCKs **
+<img alt="alt text" src="../../_images/timA_lane0-3_rt55.png" /></p>
+<p>** roundtrip 54 DCKs **
+<img alt="alt text" src="../../_images/timA_lane0-3_rt54.png" /></p>
+<p>** roundtrip 53 DCKs **
+<img alt="alt text" src="../../_images/timA_lane0-3_rt53.png" /></p>
+<p>As you can see the signal has some jitter as every sample was taken in a
+different loop iteration. The result register only contains a single bit per
+lane.</p>
+</div>
+</div>
+<div class="section" id="algorithm">
+<span id="algorithm"></span><h2>Algorithm<a class="headerlink" href="#algorithm" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="steps">
+<span id="steps"></span><h3>Steps<a class="headerlink" href="#steps" title="Permalink to this headline">¶</a></h3>
+<p>The algorithm finds the roundtrip time, IO delay and IO phase. The IO phase
+will be adjusted to match the falling edge of the preamble of each lane.
+The roundtrip time is adjusted to an minimal value, that still includes the
+preamble.</p>
+</div>
+<div class="section" id="synchronize-to-data-phase">
+<span id="synchronize-to-data-phase"></span><h3>Synchronize to data phase<a class="headerlink" href="#synchronize-to-data-phase" title="Permalink to this headline">¶</a></h3>
+<p>The first measurement done in read-leveling samples all DQS values for one
+phase [0-64) * 1/64th DCK. It then searches for the middle of the low data
+symbol and adjusts timA to the found phase and thus the following measurements
+will be aligned to the low data symbol.
+The code assumes that the initial roundtrip time causes the measurement to be
+in the alternating pattern data phase.</p>
+</div>
+<div class="section" id="finding-the-preamble">
+<span id="finding-the-preamble"></span><h3>Finding the preamble<a class="headerlink" href="#finding-the-preamble" title="Permalink to this headline">¶</a></h3>
+<p>After adjusting the IO phase to the middle of one data symbol the preamble will
+be located. Unlike the data phase, which is an alternating pattern (010101…),
+the preamble consists of two high data cycles.</p>
+<p>The code decrements the IO delay/RTT and samples the DQS signal with timA
+untouched. As it has been positioned in the middle of the data symbol, it’ll
+read as either “low” or “high”.</p>
+<p>If it’s “low” we are still in the data phase.
+If it’s “high” we have found the preamble.</p>
+<p>The roundtrip time and IO delay will be adjusted until all lanes are aligned.
+The resulting IO delay is visible in the picture below.</p>
+<p>** roundtrip time: 49 DCKs, IO delay (at blue point): 6 DCKs **
+<img alt="alt text" src="../../_images/timA_lane0-3_discover_420x.png" /></p>
+<p>** Note: The sampled data has been shifted by timA. The preamble is now
+in phase. **</p>
+</div>
+</div>
+<div class="section" id="fine-adjustment">
+<span id="fine-adjustment"></span><h2>Fine adjustment<a class="headerlink" href="#fine-adjustment" title="Permalink to this headline">¶</a></h2>
+<p>As timA still points the middle of the data symbol an offset of 32 is added.
+It now points the falling edge of the preamble.
+The fine adjustment is to reduce errors introduced by jitter. The phase is
+adjusted from <code class="docutils literal"><span class="pre">timA</span> <span class="pre">-</span> <span class="pre">25</span></code> to <code class="docutils literal"><span class="pre">timA</span> <span class="pre">+</span> <span class="pre">25</span></code> and the DQS signal is sampled 100
+times. The fine adjustment finds the middle of each rising edge (it’s actual
+the falling edge of the preamble) to get the final IO phase. You can see the
+result in the picture below.</p>
+<p><img alt="alt text" src="../../_images/timA_lane0-3_adjust_fine.png" /></p>
+<p>Lanes 0 - 2 will be adjusted by a phase of -10, while lane 3 is already correct.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="Sandybridge_freq.html" class="btn btn-neutral" title="Frequency selection" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

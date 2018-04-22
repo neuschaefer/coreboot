@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>libgfxinit - Native Graphics Initialization &mdash; coreboot 4.7 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="coreboot 4.7 documentation" href="../index.html"/>
+        <link rel="next" title="Sandy Bridge Raminit" href="../Intel/NativeRaminit/Sandybridge.html"/>
+        <link rel="prev" title="GPIO toggling in ACPI AML for coreboot" href="../acpi/gpio.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> coreboot
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                4.7
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../Lesson2.html">Lesson 2: Submitting a patch to coreboot.org</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gerrit_guidelines.html">Gerrit Etiquette and Guidelines</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../build_system.html">coreboot's build system</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../core/Kconfig.html">Kconfig in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submodules.html">Use of git submodules in coreboot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../timestamp.html">Timestamps</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../technotes/2017-02-dealing-with-untrusted-input-in-smm.html">Dealing with Untrusted Input in SMM</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../abi-data-consumption.html">ABI data consumption</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acpi/gpio.html">GPIO toggling in ACPI AML</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Native Graphics Initialization with libgfxinit</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-and-current-state-in-coreboot">Introduction and Current State in coreboot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gma-framebuffer-configuration">GMA: Framebuffer Configuration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gma-hook-up-in-chipset-initialization">GMA: Hook-up in Chipset Initialization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gma-per-board-configuration">GMA: Per Board Configuration</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../Intel/NativeRaminit/Sandybridge.html">Sandy Bridge Raminit</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">coreboot</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>libgfxinit - Native Graphics Initialization</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/gfx/libgfxinit.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="libgfxinit-native-graphics-initialization">
+<span id="libgfxinit-native-graphics-initialization"></span><h1>libgfxinit - Native Graphics Initialization<a class="headerlink" href="#libgfxinit-native-graphics-initialization" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="introduction-and-current-state-in-coreboot">
+<span id="introduction-and-current-state-in-coreboot"></span><h2>Introduction and Current State in coreboot<a class="headerlink" href="#introduction-and-current-state-in-coreboot" title="Permalink to this headline">¶</a></h2>
+<p><em>libgfxinit</em> is a library of full-featured graphics initialization
+(aka. modesetting) drivers. It’s implemented in SPARK (a subset of
+Ada with formal verification features). While not restricted to in
+any way, it currently only supports Intel’s integrated gfx control-
+lers (GMA).</p>
+<p>Currently, it supports the Intel Core i3/i5/i7 processor line and
+will support HDMI and DP on the Atom successor Apollo Lake. At the
+time of writing, Sandy Bridge, Ivy Bridge, and Haswell are veri-
+fied to work within <em>coreboot</em>.</p>
+</div>
+<div class="section" id="gma-framebuffer-configuration">
+<span id="gma-framebuffer-configuration"></span><h2>GMA: Framebuffer Configuration<a class="headerlink" href="#gma-framebuffer-configuration" title="Permalink to this headline">¶</a></h2>
+<p><em>coreboot</em> supports two different framebuffer setups. The default
+enables the legacy VGA plane in textmode. Due to legacy hardware
+constraints, only the first found display is enabled in this mode.
+(cf. <code class="docutils literal"><span class="pre">src/drivers/intel/gma/text_fb/gma.adb</span></code>).</p>
+<p>The second option sets up a high-resolution framebuffer with the
+native resolution of the display if only one is detected, or the
+smallest of all resolutions (per dimension) if multiple displays
+are detected. This option is selected by
+<code class="docutils literal"><span class="pre">CONFIG_FRAMEBUFFER_KEEP_VESA_MODE</span></code>.
+(cf. <code class="docutils literal"><span class="pre">src/drivers/intel/gma/hires_fb/gma.adb</span></code>).</p>
+<p>In any case, a smaller framebuffer is up-scaled to each display’s
+native resolution while keeping aspect ratio.</p>
+</div>
+<div class="section" id="gma-hook-up-in-chipset-initialization">
+<span id="gma-hook-up-in-chipset-initialization"></span><h2>GMA: Hook-up in Chipset Initialization<a class="headerlink" href="#gma-hook-up-in-chipset-initialization" title="Permalink to this headline">¶</a></h2>
+<p>Both configurations described above implement a procedure
+<code class="docutils literal"><span class="pre">GMA.gfxinit()</span></code>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">procedure</span> <span class="n">gfxinit</span> <span class="p">(</span><span class="n">lightup_ok</span> <span class="p">:</span> <span class="n">out</span> <span class="nb">int</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>This procedure is exported as the C function <code class="docutils literal"><span class="pre">gma_gfxinit()</span></code> as
+follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">void</span> <span class="n">gma_gfxinit</span><span class="p">(</span><span class="nb">int</span> <span class="o">*</span><span class="n">lightup_ok</span><span class="p">);</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">lightup_ok</span></code>: returns whether the initialization succeeded <code class="docutils literal"><span class="pre">1</span></code> or
+failed <code class="docutils literal"><span class="pre">0</span></code>. Currently, only the case that no display
+could be found counts as failure. A failure at a la-
+ter stage (e.g. failure to train a DP) is not propa-
+gated.</li>
+</ul>
+</div>
+<div class="section" id="gma-per-board-configuration">
+<span id="gma-per-board-configuration"></span><h2>GMA: Per Board Configuration<a class="headerlink" href="#gma-per-board-configuration" title="Permalink to this headline">¶</a></h2>
+<p>There are a few Kconfig symbols to consider. To indicate that a
+board can initialize graphics through <em>libgfxinit</em>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">select</span> <span class="n">MAINBOARD_HAS_LIBGFXINIT</span>
+</pre></div>
+</div>
+<p>Internal ports share some hardware blocks (e.g. backlight, panel
+power sequencer). Therefore, each board has to select either eDP
+or LVDS as the internal port, if any:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">select</span> <span class="n">GFX_GMA_INTERNAL_IS_EDP</span>  <span class="c1"># the default, or</span>
+<span class="n">select</span> <span class="n">GFX_GMA_INTERNAL_IS_LVDS</span>
+</pre></div>
+</div>
+<p>Boards with a DVI-I connector share the DDC (I2C) pins for both
+analog and digital displays. In this case, <em>libgfxinit</em> needs to
+know through which interface the EDID can be queried:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">select</span> <span class="n">GFX_GMA_ANALOG_I2C_HDMI_B</span>    <span class="c1"># or</span>
+<span class="n">select</span> <span class="n">GFX_GMA_ANALOG_I2C_HDMI_C</span>    <span class="c1"># or</span>
+<span class="n">select</span> <span class="n">GFX_GMA_ANALOG_I2C_HDMI_D</span>
+</pre></div>
+</div>
+<p>Beside Kconfig options, <em>libgfxinit</em> needs to know which ports are
+implemented on a board and should be probed for displays. Each
+board has to implement the package <code class="docutils literal"><span class="pre">GMA.Mainboard</span></code> with a list:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ports</span> <span class="p">:</span> <span class="n">HW</span><span class="o">.</span><span class="n">GFX</span><span class="o">.</span><span class="n">GMA</span><span class="o">.</span><span class="n">Display_Probing</span><span class="o">.</span><span class="n">Port_List</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>or a function returning such a list:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">function</span> <span class="n">ports</span> <span class="k">return</span> <span class="n">HW</span><span class="o">.</span><span class="n">GFX</span><span class="o">.</span><span class="n">GMA</span><span class="o">.</span><span class="n">Display_Probing</span><span class="o">.</span><span class="n">Port_List</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>You can select from the following Ports:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nb">type</span> <span class="n">Port_Type</span> <span class="ow">is</span>
+  <span class="p">(</span><span class="n">Disabled</span><span class="p">,</span>    <span class="o">--</span> <span class="n">optionally</span> <span class="n">terminates</span> <span class="n">the</span> <span class="nb">list</span>
+   <span class="n">Internal</span><span class="p">,</span>    <span class="o">--</span> <span class="n">either</span> <span class="n">eDP</span> <span class="ow">or</span> <span class="n">LVDS</span> <span class="k">as</span> <span class="n">selected</span> <span class="ow">in</span> <span class="n">Kconfig</span>
+   <span class="n">DP1</span><span class="p">,</span>
+   <span class="n">DP2</span><span class="p">,</span>
+   <span class="n">DP3</span><span class="p">,</span>
+   <span class="n">HDMI1</span><span class="p">,</span>       <span class="o">--</span> <span class="n">also</span> <span class="n">DVI</span><span class="o">-</span><span class="n">D</span><span class="p">,</span> <span class="ow">or</span> <span class="n">HDMI</span> <span class="n">over</span> <span class="n">DP</span><span class="o">++</span>
+   <span class="n">HDMI2</span><span class="p">,</span>
+   <span class="n">HDMI3</span><span class="p">,</span>
+   <span class="n">Analog</span><span class="p">);</span>     <span class="o">--</span> <span class="n">legacy</span> <span class="n">VGA</span> <span class="n">port</span><span class="p">,</span> <span class="ow">or</span> <span class="n">analog</span> <span class="n">part</span> <span class="n">of</span> <span class="n">DVI</span><span class="o">-</span><span class="n">I</span>
+</pre></div>
+</div>
+<p>Each <code class="docutils literal"><span class="pre">DPx</span></code> and <code class="docutils literal"><span class="pre">HDMIx</span></code> pair share pins. If they are exposed as DP
+ports, they are usually DP++ (aka. dual-mode DP) ports that can
+also output HDMI signals through passive adapters. In this case,
+both DPx and HDMIx should be listed.</p>
+<p>A good example is the mainboard Kontron/KTQM77, it features two
+DP++ ports (DP2/HDMI2, DP3/HDMI3), one DVI-I port (HDMI1/Analog),
+eDP and LVDS. Due to the constraints mentioned above, only one of
+eDP and LVDS can be enabled. It defines <code class="docutils literal"><span class="pre">ports</span></code> as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ports</span> <span class="p">:</span> <span class="n">constant</span> <span class="n">Port_List</span> <span class="p">:</span><span class="o">=</span>
+  <span class="p">(</span><span class="n">DP2</span><span class="p">,</span>
+   <span class="n">DP3</span><span class="p">,</span>
+   <span class="n">HDMI1</span><span class="p">,</span>
+   <span class="n">HDMI2</span><span class="p">,</span>
+   <span class="n">HDMI3</span><span class="p">,</span>
+   <span class="n">Analog</span><span class="p">,</span>
+   <span class="n">Internal</span><span class="p">,</span>
+   <span class="n">others</span> <span class="o">=&gt;</span> <span class="n">Disabled</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">GMA.gfxinit()</span></code> procedure probes for display EDIDs in the
+given order until all available pipes are taken. That’s 1 pipe
+in VGA textmode, 2 pipes in high-resolution mode until Sandy
+Bridge, 3 pipes from Ivy Bridge on.</p>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../Intel/NativeRaminit/Sandybridge.html" class="btn btn-neutral float-right" title="Sandy Bridge Raminit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../acpi/gpio.html" class="btn btn-neutral" title="GPIO toggling in ACPI AML for coreboot" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright the coreboot project.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'4.7',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
